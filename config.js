@@ -4,13 +4,13 @@ const API_KEY = "AIzaSyA_tptCHQOo_qjepsOVk5_D1j9Beh10kWQ";
 
 // Is function ka use hum har jagah karenge API call ke liye
 async function callGeminiAPI(prompt, isJson = false) {
-    // Check if the API key is missing or is still the placeholder value
+    // Check for missing or placeholder API key
     if (!API_KEY || API_KEY === "AIzaSyDVQoDLepMISY4V2-wE0UyXDn58Vi5YvL4") {
         const errorMsg = "API Key not configured in config.js";
         return isJson ? JSON.stringify({ error: errorMsg }) : errorMsg;
     }
 
-    // UPDATED: Using gemini-2.5-flash as the stable version for 2026
+    // FIXED: Updated model to gemini-2.5-flash (Stable 2026 version)
     const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
 
     try {
@@ -27,14 +27,13 @@ async function callGeminiAPI(prompt, isJson = false) {
 
         if (!response.ok) {
             const errorData = await response.json();
-            // This will help identify if the error is due to an invalid key or restricted model
-            throw new Error(errorData.error.message || "Unknown API Error");
+            throw new Error(errorData.error.message || `HTTP Error ${response.status}`);
         }
 
         const data = await response.json();
         
-        // Safety check for response structure
-        if (data.candidates && data.candidates[0].content.parts[0].text) {
+        // Safety check to ensure the AI returned content
+        if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
             return data.candidates[0].content.parts[0].text;
         } else {
             throw new Error("Invalid response format from Gemini API");
