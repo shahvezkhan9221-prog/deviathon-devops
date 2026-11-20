@@ -32,6 +32,7 @@
             }
         }
     </script>
+    <script src="config.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
     <style>
@@ -351,39 +352,8 @@
             
             // GLAI API and Panel Logic
             async function callGeminiForDoubt(prompt) {
-                // The API key is managed by the environment, so we leave it as an empty string.
-                const API_KEY = "AIzaSyA_tptCHQOo_qjepsOVk5_D1j9Beh10kWQ"; 
-                
-                // Corrected the model name to a valid and available one.
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
-                
-                const requestBody = { contents: [{ parts: [{ text: prompt }] }] };
-
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(requestBody)
-                    });
-
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(errorData?.error?.message || `API Error: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-                    
-                    if (!data.candidates || !data.candidates[0].content) {
-                       if (data.promptFeedback && data.promptFeedback.blockReason) {
-                           throw new Error(`Request blocked: ${data.promptFeedback.blockReason}`);
-                       }
-                        throw new Error('Invalid API response structure');
-                    }
-                    return data.candidates[0].content.parts[0].text;
-                } catch (error) {
-                    console.error("Error calling Gemini API:", error);
-                    throw error;
-                }
+                const result = await window.callGeminiAPI(prompt);
+                return result.text;
             }
             
             const glaiOpenButton = document.getElementById('glai-open-button');
@@ -411,7 +381,10 @@
                 
                 try {
                     const response = await callGeminiForDoubt(prompt);
-                    const formattedResponse = response
+                    const escapedResponse = response.replace(/[&<>"']/g, (character) => ({
+                        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+                    })[character]);
+                    const formattedResponse = escapedResponse
                         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>')
                         .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre class="bg-slate-900 p-3 rounded-md text-xs my-2 overflow-x-auto"><code>$2</code></pre>')
                         .replace(/`(.*?)`/g, '<code class="bg-slate-700 px-1 rounded-sm text-amber-300">$1</code>')
@@ -419,7 +392,10 @@
 
                     answerContainer.innerHTML = `<div class="p-4 bg-slate-800/50 rounded-lg border border-slate-700">${formattedResponse}</div>`;
                 } catch (e) {
-                    answerContainer.innerHTML = `<div class="p-4 bg-red-900/50 rounded-lg border border-red-700 text-red-300"><strong>Error:</strong> ${e.message}</div>`;
+                    const errorMessage = document.createElement('div');
+                    errorMessage.className = 'p-4 bg-red-900/50 rounded-lg border border-red-700 text-red-300';
+                    errorMessage.textContent = `Error: ${e.message}`;
+                    answerContainer.replaceChildren(errorMessage);
                 }
             });
         });
