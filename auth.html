@@ -61,7 +61,7 @@
                      </svg>
                     <h1 class="dynamic-text text-3xl font-bold text-indigo-400">GLA University Login</h1>
                 </div>
-                <p class="text-gray-400 mt-2">ID- <b>shahvez693@gmail.com</b>  <br><b>password- Shahvez1213</b></p>
+                <p class="text-gray-400 mt-2">Sign-in is not connected to a secure authentication service yet.</p>
             </div>
 
             <form id="login-form" method="POST" class="space-y-6">
@@ -84,7 +84,7 @@
                         <a href="#" class="font-medium text-indigo-400 hover:text-indigo-500">Forgot your password?</a>
                     </div>
                 </div>
-                <p id="login-error" class="text-red-500 text-center text-sm h-4"></p>
+                <p id="login-error" class="text-amber-300 text-center text-sm min-h-5 leading-5" role="status" aria-live="polite"></p>
                 
                 <div id="login-button-container" class="relative w-full h-12 flex justify-center items-center">
                     <button type="submit" id="login-btn" class="w-1/3 flex justify-center py-3 px-4 border border-transparent rounded-md shadow-lg text-lg font-semibold text-white bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90">
@@ -126,8 +126,8 @@
                 <div class="w-16 h-16 bg-green-900/50 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg class="w-10 h-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 </div>
-                 <h2 class="text-2xl font-bold dynamic-text text-slate-200 mb-2">Thank You!</h2>
-                 <p class="text-slate-300 text-lg">Your response has been recorded.</p>
+                 <h2 class="text-2xl font-bold dynamic-text text-slate-200 mb-2">Request not submitted</h2>
+                 <p class="text-slate-300 text-lg">Requests cannot be sent from this preview. Please contact the university administrator.</p>
                  <button id="modal-ok-btn" class="w-full mt-6 py-2 px-4 rounded-md font-semibold text-white bg-indigo-500 hover:bg-indigo-600 transition-colors">OK</button>
             </div>
         </div>
@@ -182,38 +182,12 @@
             requestModal.addEventListener('click', (e) => { if (e.target === requestModal) closeModal(); });
             requestForm.addEventListener('submit', (e) => { e.preventDefault(); formView.classList.add('hidden'); confirmationView.classList.remove('hidden'); });
             
-            // --- LOGIN FORM LOGIC (unchanged) ---
             const loginForm = document.getElementById('login-form');
-            const emailInput = document.getElementById('email');
-            const passwordInput = document.getElementById('password');
             const loginError = document.getElementById('login-error');
-            const CORRECT_EMAIL = "shahvez693@gmail.com";
-            const CORRECT_PASSWORD = "Shahvez1213";
-            
-            loginForm.addEventListener('submit', (event) => {
-                if (isButtonDodgy) {
-                    event.preventDefault();
-                    return;
-                }
-                event.preventDefault();
-                const enteredEmail = emailInput.value;
-                const enteredPassword = passwordInput.value;
-                if (enteredEmail === CORRECT_EMAIL && enteredPassword === CORRECT_PASSWORD) {
-                    loginError.textContent = '';
-                    window.location.href = "main.html";
-                } else {
-                    loginError.textContent = "Invalid User Id or Password.";
-                    emailInput.classList.add('border-red-500');
-                    passwordInput.classList.add('border-red-500');
-                }
-            });
 
-            [emailInput, passwordInput].forEach(input => {
-                input.addEventListener('input', () => {
-                    loginError.textContent = '';
-                    emailInput.classList.remove('border-red-500');
-                    passwordInput.classList.remove('border-red-500');
-                });
+            loginForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                loginError.textContent = 'Secure sign-in is not configured yet. Your credentials were not sent or stored.';
             });
 
             // --- GYROSCOPE BACKGROUND EFFECT (unchanged) ---
@@ -244,134 +218,10 @@
                 document.body.addEventListener('click', requestGyroPermission, { once: true });
             }
 
-            // --- NEW: FRANTIC BUTTON WITH SPRING PHYSICS ---
             const loginBtn = document.getElementById('login-btn');
-            const loginButtonContainer = document.getElementById('login-button-container');
-            const fields = [emailInput, passwordInput];
-
-            let isButtonDodgy = true;
-            let animationFrameId = null;
-
-            let pos = { x: 0, y: 0 };
-            let vel = { x: 0, y: 0 };
-            const mouse = { x: 0, y: 0 };
-
-            const checkInputs = () => {
-                return fields.every(input => input.value.trim() !== '');
-            };
-
-            function animationLoop() {
-                if (!isButtonDodgy) return;
-
-                const containerRect = loginButtonContainer.getBoundingClientRect();
-                const btnRect = loginBtn.getBoundingClientRect();
-
-                const mouseRelX = mouse.x - containerRect.left - (containerRect.width / 2);
-                const mouseRelY = mouse.y - containerRect.top - (containerRect.height / 2);
-
-                const dx = mouseRelX - pos.x;
-                const dy = mouseRelY - pos.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                
-                const repulsionRadius = 150;
-                const repulsionStrength = 5;
-
-                // 1. Mouse Repulsion Force
-                if (dist < repulsionRadius) {
-                    // If mouse and button are in the same spot, give a random kick to escape.
-                    if (dist < 1) { 
-                        vel.x += (Math.random() - 0.5) * 2;
-                        vel.y += (Math.random() - 0.5) * 2;
-                    } else {
-                        const angle = Math.atan2(dy, dx);
-                        const force = (repulsionRadius - dist) / repulsionRadius * repulsionStrength;
-                        vel.x -= Math.cos(angle) * force;
-                        vel.y -= Math.sin(angle) * force;
-                    }
-                }
-
-                // 2. Centering Spring Force (pulls button back to the middle)
-                const springStrength = 0.01;
-                vel.x -= pos.x * springStrength;
-                vel.y -= pos.y * springStrength;
-
-                // 3. Apply Damping (friction)
-                vel.x *= 0.95;
-                vel.y *= 0.95;
-                
-                // 4. Update Position
-                pos.x += vel.x;
-                pos.y += vel.y;
-
-                // 5. Clamp Position (soft boundaries, no bouncing)
-                const maxTx = (containerRect.width - btnRect.width) / 2;
-                const maxTy = (containerRect.height - btnRect.height) / 2;
-                pos.x = Math.max(-maxTx, Math.min(maxTx, pos.x));
-                pos.y = Math.max(-maxTy, Math.min(maxTy, pos.y));
-
-                loginBtn.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
-
-                animationFrameId = requestAnimationFrame(animationLoop);
-            }
-
-            const updateButtonState = () => {
-                if (checkInputs()) {
-                    isButtonDodgy = false;
-                    if (animationFrameId) {
-                        cancelAnimationFrame(animationFrameId);
-                        animationFrameId = null;
-                    }
-                    loginBtn.style.position = 'static';
-                    loginBtn.style.transform = 'none';
-                    loginBtn.style.transition = 'all 0.3s ease';
-                    loginBtn.style.cursor = 'pointer';
-                    loginBtn.style.opacity = '1';
-                } else {
-                    isButtonDodgy = true;
-                    loginBtn.style.position = 'absolute';
-                    loginBtn.style.transition = 'none';
-                    loginBtn.style.cursor = 'not-allowed';
-                    loginBtn.style.opacity = '0.9';
-                    
-                    pos = { x: 0, y: 0 };
-                    vel = { x: 0, y: 0 };
-                    if (!animationFrameId) {
-                        animationFrameId = requestAnimationFrame(animationLoop);
-                    }
-                }
-            };
-
-            // Initial state check
-            updateButtonState();
-
-            fields.forEach(input => {
-                input.addEventListener('input', updateButtonState);
-            });
-
-            loginButtonContainer.addEventListener('mousemove', (e) => {
-                mouse.x = e.clientX;
-                mouse.y = e.clientY;
-            });
-
-            loginButtonContainer.addEventListener('mouseleave', () => {
-                const containerRect = loginButtonContainer.getBoundingClientRect();
-                mouse.x = containerRect.left + containerRect.width / 2;
-                mouse.y = containerRect.top + containerRect.height / 2;
-            });
-
-            // For mobile, fall back to a simple random jump
-            loginButtonContainer.addEventListener('touchstart', (e) => {
-                if (isButtonDodgy) {
-                    const containerRect = loginButtonContainer.getBoundingClientRect();
-                    const btnRect = loginBtn.getBoundingClientRect();
-                    let newX = Math.random() * (containerRect.width - btnRect.width);
-                    let newY = Math.random() * (containerRect.height - btnRect.height);
-                    loginBtn.style.position = 'absolute';
-                    loginBtn.style.left = `${newX}px`;
-                    loginBtn.style.top = `${newY}px`;
-                    loginBtn.style.transform = 'none';
-                }
-            }, { passive: true });
+            loginBtn.style.position = 'static';
+            loginBtn.style.transform = 'none';
+            loginBtn.style.cursor = 'pointer';
         });
     </script>
 </body>

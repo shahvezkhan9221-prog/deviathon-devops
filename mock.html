@@ -7,6 +7,7 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@600;700&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <script src="config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
@@ -1117,46 +1118,14 @@
             lucide.createIcons();
         });
         
-        const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=";
-        const API_KEY = "AIzaSyA_tptCHQOo_qjepsOVk5_D1j9Beh10kWQ"; 
-
         async function validateCompany(companyName) {
             const prompt = `Is "${companyName}" a real company that plausibly hires for tech roles? Respond "YES" or "NO".`;
             const response = await callGeminiAPI([{ text: prompt }]);
             return response.text.trim().toUpperCase().includes("YES");
         }
-        
-        async function callGeminiAPI(parts, isJson = false) {
-             try {
-                 const payload = {
-                     contents: [{ parts: parts }],
-                     generationConfig: isJson ? { responseMimeType: "application/json" } : {}
-                 };
-                 const response = await fetch(API_URL + API_KEY, {
-                     method: 'POST',
-                     headers: { 'Content-Type': 'application/json' },
-                     body: JSON.stringify(payload)
-                 });
-                 if (!response.ok) throw new Error(`API Error: ${response.status} ${response.statusText}`);
-                 const data = await response.json();
-                 if (!data.candidates || !data.candidates[0].content) {
-                    if (data.promptFeedback && data.promptFeedback.blockReason) {
-                        throw new Error(`Request blocked due to: ${data.promptFeedback.blockReason}`);
-                    }
-                     throw new Error('Invalid API response structure');
-                 }
-                 const text = data.candidates[0].content.parts[0].text;
-                 if(isJson){
-                    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
-                    if (jsonMatch && jsonMatch[1]) return { text: text, json: JSON.parse(jsonMatch[1]) };
-                    return { text: text, json: JSON.parse(text) };
-                 }
-                 return { text: text };
 
-             } catch (error) {
-                 console.error("API Error:", error);
-                 return { error: `AI Error. ${error.message}` };
-             }
+        async function callGeminiAPI(parts, isJson = false) {
+            return window.callGeminiAPI(parts, isJson);
         }
 
         async function getNewSpokenQuestion() {

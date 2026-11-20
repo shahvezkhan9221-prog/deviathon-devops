@@ -22,6 +22,7 @@
             }
         }
     </script>
+    <script src="config.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
     <style>
@@ -219,38 +220,8 @@
             
             // --- CORRECTED Shared API Call Logic ---
             async function callGeminiAPI(prompt) {
-                const API_KEY = "AIzaSyACnELuM-9jOQEsz3h9T_xpB-FDh2kdO18"; // Use an empty API key
-                const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
-                const requestBody = { contents: [{ parts: [{ text: prompt }] }] };
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(requestBody)
-                    });
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(`API Error: ${errorData.error.message}`);
-                    }
-                    const data = await response.json();
-                    if (!data.candidates || !data.candidates[0].content) {
-                       throw new Error("Invalid API response structure.");
-                    }
-                    const text = data.candidates[0].content.parts[0].text;
-                    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
-                    if (jsonMatch && jsonMatch[1]) {
-                        return JSON.parse(jsonMatch[1]);
-                    }
-                    // Fallback if no markdown block is found
-                    try {
-                        return JSON.parse(text);
-                    } catch (e) {
-                         throw new Error("Valid JSON not found in the response.");
-                    }
-                } catch (error) {
-                    console.error("Error calling or parsing Gemini API:", error);
-                    throw error;
-                }
+                const result = await window.callGeminiAPI(prompt, true);
+                return result.json;
             }
 
             // --- Problem Generator Logic ---

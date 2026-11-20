@@ -41,45 +41,7 @@
             background-color: transparent;
         }
         
-        #intro-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1000; opacity: 1;
-            display: flex; align-items: center; justify-content: center;
-            background-color: transparent; 
-            transition: opacity 1.5s cubic-bezier(0.7, 0, 0.3, 1);
-        }
-        #intro-overlay.hidden { opacity: 0; pointer-events: none; }
-        
-        #decryption-text {
-            font-family: 'Roboto Mono', monospace;
-            font-size: clamp(4rem, 15vw, 12rem);
-            font-weight: 700;
-            color: var(--text-dark-primary);
-            text-shadow: 0 0 5px var(--brand-primary), 0 0 15px var(--brand-primary);
-            white-space: nowrap;
-            animation: flicker 2s infinite alternate;
-        }
 
-        @keyframes flicker {
-            0%, 18%, 22%, 25%, 53%, 57%, 100% {
-                text-shadow:
-                0 0 4px var(--brand-primary),
-                0 0 11px var(--brand-primary),
-                0 0 19px var(--brand-primary),
-                0 0 40px var(--brand-secondary),
-                0 0 80px var(--brand-secondary);
-            }
-            20%, 24%, 55% { text-shadow: none; }    
-        }
-        
-        #page-content.hidden-initial {
-            opacity: 0; transform: translateY(20px);
-        }
-        #page-content.visible { 
-            opacity: 1; transform: translateY(0);
-            transition: opacity 1s ease-out, transform 1s ease-out;
-        }
-        
         .header-scrolled {
             background-color: rgba(2, 6, 23, 0.8); backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px); box-shadow: 0 4px 15px -1px rgba(0, 0, 0, 0.2);
@@ -96,22 +58,15 @@
             opacity: 0; transition: opacity 0.4s ease-out; pointer-events: none;
         }
         .pro-card:hover::before { opacity: 1; }
-        .chroma-card { border-width: 2px; border-color: transparent; transition: border-color 0.3s ease; }
-        .chroma-card:hover { border-color: var(--card-border); }
-        .chroma-card .image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-        .alumni-handle { cursor: pointer; transition: color 0.2s ease-in-out; text-decoration: none; }
-        .alumni-handle:hover { color: #a5b4fc; }
+
     </style>
 </head>
 
 <body class="bg-slate-950">
     
     <canvas id="intro-canvas"></canvas>
-    <div id="intro-overlay">
-        <h1 id="decryption-text" data-value="DevOps"></h1>
-    </div>
-    
-    <div id="page-content" class="hidden-initial">
+    <div id="page-content">
+
         <header id="header" class="sticky top-0 z-50 transition-all duration-300 border-b border-transparent">
             <div class="max-w-7xl mx-auto flex justify-between items-center py-2 px-6">
                 <a href="#" id="header-logo" class="flex items-center space-x-3 group">
@@ -125,8 +80,8 @@
                 </a>
                 <nav class="hidden md:flex space-x-8 items-center font-medium text-slate-400">
                     <a href="#features" class="hover:text-indigo-400 transition-colors duration-300">Features</a>
-                    <a href="#stories" class="hover:text-indigo-400 transition-colors duration-300">Stories</a>
-                    <a href="#why-us" class="hover:text-indigo-400 transition-colors duration-300">Why Us</a>
+
+
                     <a href="auth.html" class="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 transform hover:-translate-y-0.5 transition-all duration-300 shadow-lg shadow-indigo-500/20">Login</a>
                 </nav>
                 <div class="md:hidden flex items-center">
@@ -138,8 +93,8 @@
             <div id="mobile-menu" class="hidden md:hidden">
                 <nav class="flex flex-col items-center space-y-5 py-6 text-slate-300 bg-slate-900/90">
                     <a href="#features" class="hover:text-indigo-400">Features</a>
-                    <a href="#stories" class="hover:text-indigo-400">Stories</a>
-                    <a href="#why-us" class="hover:text-indigo-400">Why Us</a>
+
+
                     <a href="auth.html" class="bg-indigo-600 text-white px-8 py-2.5 rounded-lg w-auto text-center">Login</a>
                 </nav>
             </div>
@@ -199,25 +154,7 @@
                 </div>
             </section>
 
-            <section id="stories" class="py-28 bg-slate-900/50">
-                <div class="max-w-7xl mx-auto px-6">
-                    <div class="text-center mb-16">
-                        <h2 class="text-4xl md:text-5xl font-bold font-poppins" data-aos="fade-up">Our Hall of Fame</h2>
-                        <p class="text-lg text-slate-400 mt-4 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">GLAdiators who turned their dreams into reality with Prep Hub.</p>
-                    </div>
-                    <div id="chroma-grid-container" class="relative w-full h-auto flex flex-wrap justify-center items-center gap-5 p-4" style="--r: 350px; --x: 50%; --y: 50%;">
-                        <div id="chroma-mask-overlay" class="absolute inset-0 pointer-events-none z-30" style="backdrop-filter: grayscale(1) brightness(0.78); -webkit-backdrop-filter: grayscale(1) brightness(0.78); background: rgba(0,0,0,0.001); mask-image: radial-gradient(circle var(--r) at var(--x) var(--y),transparent 0%,transparent 15%,rgba(0,0,0,0.10) 30%,rgba(0,0,0,0.22)45%,rgba(0,0,0,0.35)60%,rgba(0,0,0,0.50)75%,rgba(0,0,0,0.68)88%,white 100%); -webkit-mask-image: radial-gradient(circle var(--r) at var(--x) var(--y),transparent 0%,transparent 15%,rgba(0,0,0,0.10) 30%,rgba(0,0,0,0.22)45%,rgba(0,0,0,0.35)60%,rgba(0,0,0,0.50)75%,rgba(0,0,0,0.68)88%,white 100%);"></div>
-                        <div id="chroma-fade-overlay" class="absolute inset-0 pointer-events-none transition-opacity duration-[250ms] z-40" style="backdrop-filter: grayscale(1) brightness(0.78); -webkit-backdrop-filter: grayscale(1) brightness(0.78); background: rgba(0,0,0,0.001); opacity: 1;"></div>
-                    </div>
-                </div>
-            </section>
 
-            <section id="why-us" class="py-28 max-w-7xl mx-auto px-6 text-center">
-                <h2 class="text-4xl md:text-5xl font-bold font-poppins mb-6" data-aos="fade-down">Why Prep Hub?</h2>
-                <p class="text-slate-400 text-lg max-w-3xl mx-auto" data-aos="fade-up">
-                    This isn't just another prep website. It's a movement by GLA students, for GLA students. We've been in your shoes. We failed, we learned, and we conquered. Now, we're sharing the exact playbook that helped us land jobs at the world's top tech companies.
-                </p>
-            </section>
         </main>
 
         <footer class="bg-slate-900/50 py-16 mt-12 border-t border-slate-800">
@@ -244,7 +181,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
     <script src="https://unpkg.com/atropos@2.0.2/atropos.min.js"></script>
 
     <script type="importmap">
@@ -340,46 +277,7 @@
         animateStarfield();
 
 
-        // --- DECRYPTION INTRO ---
-        const introOverlay = document.getElementById('intro-overlay');
-        const pageContent = document.getElementById('page-content');
-        const textElement = document.getElementById('decryption-text');
-        const chars = "!<>-_\\/[]{}—=+*^?#________";
-        const targetText = textElement.dataset.value;
-        let decryptInterval = null;
 
-        function startDecryption() {
-            let iteration = 0;
-            clearInterval(decryptInterval);
-            
-            decryptInterval = setInterval(() => {
-                textElement.innerText = targetText.split("")
-                    .map((letter, index) => {
-                        if(index < iteration) {
-                            return targetText[index];
-                        }
-                        return chars[Math.floor(Math.random() * chars.length)];
-                    })
-                    .join("");
-
-                if(iteration >= targetText.length){ 
-                    clearInterval(decryptInterval);
-                }
-                iteration += 1 / 3;
-            }, 60);
-        }
-        
-        const tl = gsap.timeline();
-        tl.call(startDecryption);
-        tl.to({}, {duration: 2.5});
-        tl.to(introOverlay, {opacity: 0, duration: 1.5, ease: 'power2.out'});
-        tl.call(() => {
-            introOverlay.classList.add('hidden');
-            pageContent.classList.remove('hidden-initial');
-            pageContent.classList.add('visible');
-            setTimeout(() => AOS.init({ duration: 800, once: true, offset: 100 }), 100);
-        });
-        
         // --- GENERAL PAGE SCRIPTS ---
         const letters = "!<>-_\\/[]{}—=+*^?#________";
         document.querySelectorAll('.scramble-text').forEach(el => {
@@ -399,7 +297,9 @@
         Atropos({ el: '.feature-card', activeOffset: 40, shadowScale: 1.05, highlight: true, shadow: true });
 
         document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({ duration: 800, once: true, offset: 100 });
             new Typed("#typed-text", { strings: ["Master DSA.", "Ace Interviews.", "Land Your Dream Job."], typeSpeed: 60, backSpeed: 40, loop: true });
+
             
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
@@ -418,70 +318,7 @@
             const heroCanvas = document.getElementById('hero-canvas');
             if (heroCanvas) { /* Original logic remains */ }
             
-            const chromaGridContainer = document.getElementById('chroma-grid-container');
-            if (chromaGridContainer) {
-                const alumniData = [
-                    { image: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhtFMPyvgX-Je4ejJquyO7jd98WM63KQ-oZRoyYZ-ONMIBHnN_FRel8_ve-FPzwCdVKhOb96RfX61YSnpZbxavS6e-N3Zi1TPqm9iQM_R6PkCOypnScLTqYuOJw14FQwGjiu6G7HceUaFZl8GjCdcgP0QBRmp9mGx8GYh7LfN1pHHd16nXnO-OJqlX8PWQ/s320/1000023822.jpg', title: 'Shahvez khan', subtitle: 'SDE at Google', handle: '@shahvez', borderColor: '#4285F4', gradient: 'linear-gradient(145deg, #4285F4, #0f172a)', storyUrl: 'shahvez.html', linkedinUrl: 'https://www.linkedin.com/in/shahvez-khan-9a8988361?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app'}, 
-                    { image: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjK58ANcEzP1AVYHKpaMng9xVScOz9tTdj7xZHGwaVeFVSrJy5vJHyGh_AUffdZ2cY9m9I2UuuddTDcjVzbVrn32_KIiZ22eLxiKfUwhsQuyF5-7bu5wq7m29t3fdN5uFt9Nmqeb3lQ9K08fm5AFpIEKwxf-XOlu1beqUHl9Nk6RroYw0YBLP42nUCLFnc/s320/1000023825.jpg', title: 'Harsh Jha', subtitle: 'Cloud Eng. at Amazon', handle: '@harsh', borderColor: '#FF9900', gradient: 'linear-gradient(145deg, #FF9900, #0f172a)', storyUrl: null, linkedinUrl: 'https://www.linkedin.com/in/harsh-jha-9377a3233/'},
-                    { image: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjvuhOxYTdT2WtyyHl1EzO2HDnp7EbeOHd5m3IRhLNjNfIhXLePfz4pQi6OsR8LYfMCTJ0w9v5zE1JGe_yd_pibRDpAH81dvoAoRFvl4rtBMIkZxVqnspSVZ01yPpD9USmGe2K4dmr_HRkjuq0AbDaPU6aOCojddXZ3O9mcC9qaRvKwJtgL6vMFuJjaQRs/s320/Screenshot%202025-09-21%20012619.png', title: 'Bhavya Aggarwal', subtitle: 'Data Scientist at Netflix', handle: '@bhavya', borderColor: '#E50914', gradient: 'linear-gradient(145deg, #E50914, #0f172a)', storyUrl: null, linkedinUrl: 'https://www.linkedin.com/in/bhavya-aggarwal-2b4952226/'},
-                    { image: 'https://blogger.googleusercontent.com/img/a/AVvXsEiJCmafIYZgz-190lxfwA3OiS42Roo1UWOFez6qeXVrM3QJBG4nt3zK6cMyu3uwBPWaq7321ivEScsu4tGqF6PitWdo3Nqv93jv1SRr2rSGI8wYIrEaaE_hRj6ToTJQZD1d91w86oZsUoVOhTIj_pBiTcH-YkbcY7QrVA_XvMvppHaloNlQmM0LkB1HoEw', title: 'Deepak', subtitle: 'UX Designer at Adobe', handle: '@deepak', borderColor: '#FF0000', gradient: 'linear-gradient(145deg, #FF0000, #0f172a)', storyUrl: null, linkedinUrl: 'https://www.linkedin.com/in/deepak-d-12345678/'}
-                ];
-                alumniData.forEach(alumnus => { const cardHTML = `<article class="chroma-card group relative flex flex-col w-[250px] sm:w-[280px] h-[350px] rounded-[20px] overflow-hidden cursor-pointer" style="--card-border: ${alumnus.borderColor}; background: ${alumnus.gradient};" data-story-url="${alumnus.storyUrl || ''}" data-aos="fade-up" data-aos-delay="100"><div class="spotlight-overlay absolute inset-0 pointer-events-none transition-opacity duration-500 z-20 opacity-0 group-hover:opacity-100" style="background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.3), transparent 70%);"></div><div class="image-wrapper relative z-10 flex-1 p-[10px] box-border"><img src="${alumnus.image}" alt="${alumnus.title}" loading="lazy" class="w-full h-full object-cover rounded-[10px]" /></div><footer class="relative z-10 p-3 text-white grid grid-cols-[1fr_auto] gap-x-3 gap-y-1"><h3 class="m-0 text-[1.05rem] font-semibold">${alumnus.title}</h3><span class="alumni-handle text-[0.95rem] opacity-80 text-right" data-linkedin-url="${alumnus.linkedinUrl}">${alumnus.handle}</span><p class="m-0 text-[0.85rem] opacity-85 col-span-2">${alumnus.subtitle}</p></footer></article>`; chromaGridContainer.insertAdjacentHTML('beforeend', cardHTML); });
-                
-                const fadeOverlay = document.getElementById('chroma-fade-overlay'); 
-                const setX = gsap.quickSetter(chromaGridContainer, "--x", "px"); 
-                const setY = gsap.quickSetter(chromaGridContainer, "--y", "px");
-                const pos = {x:0, y:0};
-                
-                const handleGridMove = (e) => {
-                    const rect = chromaGridContainer.getBoundingClientRect();
-                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
-                    gsap.to(pos, { 
-                        x: clientX - rect.left, 
-                        y: clientY - rect.top, 
-                        duration: 0.45, 
-                        ease: 'power3.out', 
-                        onUpdate: () => { setX(pos.x); setY(pos.y); }
-                    });
-                    gsap.to(fadeOverlay, { opacity: 0, duration: 0.25 });
-                };
-
-                const handleGridLeave = () => {
-                    gsap.to(fadeOverlay, { opacity: 1, duration: 0.6 });
-                };
-
-                chromaGridContainer.addEventListener('pointermove', handleGridMove);
-                chromaGridContainer.addEventListener('touchmove', handleGridMove, { passive: true });
-                chromaGridContainer.addEventListener('pointerleave', handleGridLeave);
-                chromaGridContainer.addEventListener('touchend', handleGridLeave);
-                
-                document.querySelectorAll('.chroma-card').forEach(card => {
-                    const handleCardMove = (e) => {
-                        const rect = card.getBoundingClientRect();
-                        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                        card.style.setProperty('--mouse-x', `${clientX - rect.left}px`);
-                        card.style.setProperty('--mouse-y', `${clientY - rect.top}px`);
-                    };
-
-                    card.addEventListener('mousemove', handleCardMove);
-                    card.addEventListener('touchmove', handleCardMove, { passive: true });
-                    
-                    card.addEventListener('click', (e) => {
-                        const handle = e.target.closest('.alumni-handle');
-                        if (handle) {
-                            e.stopPropagation();
-                            const url = handle.dataset.linkedinUrl;
-                            if (url && url !== '#') window.open(url, '_blank', 'noopener,noreferrer');
-                        } else {
-                            const url = card.dataset.storyUrl;
-                            if (url && url !== 'null' && url !== '' && url !=='#') window.location.href = url;
-                        }
-                    });
-                });
-            }
         });
     </script>
 </body>

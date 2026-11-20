@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Resume Architect - GLA Placement Prep Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="config.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -244,23 +245,8 @@
             
             // --- Shared API Call Logic ---
             async function callGeminiAPI(prompt, isJsonExpected = true) {
-                // ... (API call logic remains the same)
-                 const API_KEY = "AIzaSyACnELuM-9jOQEsz3h9T_xpB-FDh2kdO18";
-                const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                    });
-                    if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
-                    const data = await response.json();
-                    const text = data.candidates[0].content.parts[0].text;
-                    if (!isJsonExpected) return text;
-                    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
-                    if (jsonMatch && jsonMatch[1]) return JSON.parse(jsonMatch[1]);
-                    throw new Error("Valid JSON block not found in the response.");
-                } catch (error) { console.error("Gemini API Error:", error); throw error; }
+                const result = await window.callGeminiAPI(prompt, isJsonExpected);
+                return isJsonExpected ? result.json : result.text;
             }
 
             // --- Guided Form Logic ---
@@ -336,23 +322,27 @@
                     alert('Please upload a PDF file.');
                     return;
                 }
+                if (file.size > 2_000_000) {
+                    alert('Please choose a PDF smaller than 2 MB.');
+                    return;
+                }
+
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onloadend = async () => {
                     const base64String = reader.result.split(',')[1];
                     document.getElementById('upload-spinner').classList.remove('hidden');
-                    const prompt = `Parse the following resume file (PDF represented in Base64) and extract its content. The response MUST be ONLY raw JSON in a \`\`\`json block with keys: "name", "contact" (object with phone, email, linkedin), "summary", "experience" (array of objects with title, company, duration, responsibilities array), "education" (array of objects with degree, university, duration), "skills" (array of strings). File data: ${base64String}`;
+                    const prompt = 'Read this resume and return only valid JSON with keys: name, contact (phone, email, linkedin), summary, experience (array of title, company, duration, responsibilities array), education (array of degree, university, duration), and skills (array of strings). Use empty strings or arrays for missing information.';
                     try {
-                        // NOTE: This requires a model that supports file/multimodal input, like Gemini 1.5 Pro.
-                        // For this hackathon demo, we will simulate the parsing.
-                        // In a real scenario, you'd call the API here.
-                        // resumeData = await callGeminiAPI(prompt); 
-                        
-                        // --- SIMULATED RESPONSE FOR DEMO ---
-                        alert("AI parsing successful! (Simulated for Demo). Now, choose your template.");
-                        resumeData = {"name":"John Doe","contact":{"phone":"123-456-7890","email":"john.doe@email.com","linkedin":"linkedin.com/in/johndoe"},"summary":"A skilled software engineer...","experience":[{"title":"Senior Developer","company":"Tech Solutions Inc.","duration":"2020-Present","responsibilities":["Developed new features..."]}],"education":[{"degree":"B.S. in Computer Science","university":"State University","duration":"2016-2020"}],"skills":["JavaScript","React","Node.js"]};
-                        // --- END SIMULATION ---
-
+                        const result = await window.callGeminiAPI([
+                            { text: prompt },
+                            { inlineData: { mimeType: 'application/pdf', data: base64String } }
+                        ], true);
+                        const parsed = result.json;
+                        if (!parsed || typeof parsed !== 'object' || !parsed.contact || !Array.isArray(parsed.experience) || !Array.isArray(parsed.education) || !Array.isArray(parsed.skills)) {
+                            throw new Error('The resume response did not match the expected format.');
+                        }
+                        resumeData = parsed;
                         showTemplateSelection();
                     } catch (e) {
                         alert(`Failed to parse resume: ${e.message}`);
